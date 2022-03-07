@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lifeShare.dao.UsersMapper">
+	<resultMap type="lifeShare.dto.Users" id="users_resultMap">		
+		<result column="ID" property="id" />
+		<result column="PASSWORD" property="password" />
+		<result column="PHONE" property="phone" />
+		<result column="NAME" property="name" />
+		<result column="LEVEL" property="level" />
+	</resultMap>
+	
+	<select id="getUser" resultMap="users_resultMap">
+		select ID,NAME,LEVEL,PASSWORD,PHONE from USERS where ID = #{id}
+	</select>
+	
+	<update id="updateUser" parameterType="map">
+		update USERS set PASSWORD = #{password}, PHONE = #{phone}, NAME = #{name} where ID = #{id}
+	</update>
+
+	<insert id="addUsers" parameterType="lifeShare.dto.Users">
+		insert into USERS(ID, PASSWORD, PHONE, NAME, LEVEL) values (#{id}, #{password}, #{phone},#{name}, default)
+	</insert> 
+	
+
+	
+</mapper>

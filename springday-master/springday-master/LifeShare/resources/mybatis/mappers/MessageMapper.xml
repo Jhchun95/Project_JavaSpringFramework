@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lifeShare.dao.MessageMapper">
+
+	<resultMap type="lifeShare.dto.Message" id="MessageMap">
+	      <id column="MID" property="mid" />
+	      <id column="SENDER" property="sender" />
+	      <id column="RECEIVER" property="receiver" />
+	      <id column="MESSAGE" property="message" />
+	      <id column="IS_OPEN" property="is_open" />
+	      <id column="SEND_DATE" property="send_date" />
+	 </resultMap>
+
+	<!-- 쪽지전송 -->
+	<insert id="addMessage" parameterType="lifeShare.dto.Message">
+	INSERT INTO MESSAGE (MID,SENDER,RECEIVER,MESSAGE,IS_OPEN,SEND_DATE) VALUES (NULL,#{sender},#{receiver},#{message},FALSE,NOW());
+	</insert>
+
+	<!-- 쪽지리스트 (나와 쪽지하는 상대유저이름리스트/제일 최근 쪽지의 오픈유무보여주기) -->
+	<select id="getMyMessage" resultMap="MessageMap" parameterType="String">
+	SELECT A.MID,A.SENDER,A.RECEIVER,A.IS_OPEN,A.MESSAGE,A.SEND_DATE FROM MESSAGE A 
+	INNER JOIN (SELECT SENDER, MAX(MID) MMID FROM MESSAGE GROUP BY SENDER, RECEIVER HAVING RECEIVER=#{receiver}) B 
+	ON A.MID=B.MMID;
+	</select>
+	
+	<!-- 쪽지리스트 (특정유저와의 쪽지리스트) -->
+	<select id="getMyMessageList" resultMap="MessageMap" >
+	SELECT MID,SENDER,RECEIVER,MESSAGE,IS_OPEN,SEND_DATE FROM MESSAGE WHERE (RECEIVER = #{arg1} and SENDER = #{arg0}) or (RECEIVER = #{arg0} and SENDER = #{arg1}) ORDER BY MID DESC
+	</select>
+	
+	<!-- 특정유저와의 쪽지함 전체삭제(둘다에게삭제됨) -->
+	<delete id="deleteMessage">
+	DELETE FROM MESSAGE WHERE (SENDER = #{sender} and RECEIVER = #{receiver}) or (SENDER = #{receiver} and RECEIVER = #{sender})
+	</delete>
+	
+	<!-- 특정유저와의 쪽지함 확인 -->
+	<update id="openMessage">
+	UPDATE MESSAGE SET IS_OPEN = TRUE WHERE RECEIVER = #{arg0} and SENDER = #{arg1}
+	</update>
+
+	<select id = "openCount" resultType="java.lang.Integer">
+	select count(IS_OPEN) from MESSAGE where RECEIVER=#{uid} AND IS_OPEN = 0
+	</select>
+</mapper>

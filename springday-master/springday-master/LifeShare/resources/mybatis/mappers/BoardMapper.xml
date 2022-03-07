@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lifeShare.dao.BoardMapper">
+<resultMap id="boardMap" type="lifeShare.dto.Board">
+	<id column="BID" property="bid"/>
+	<id column="UID" property="uid"/>
+	<id column="BTYPE" property="btype"/>
+	<id column="TITLE" property="title"/>
+	<id column="STATE" property="state"/>
+	<id column="CATEGORY" property="category"/>
+	<id column="LOC" property="loc"/>
+	<id column="LOC2" property="loc2"/>
+	<id column="CONTENT" property="content"/>
+	<id column="LIKES" property="likes"/>
+	<id column="VIEWS" property="views"/>
+	<id column="IMG" property="img" jdbcType="BLOB"/><!-- 여기 바이트로!  -->
+	<id column="TIME_OF_UPLOAD" property="time_of_upload"/>
+</resultMap>
+	<select id="getBoard" resultMap="boardMap"> <!-- id이름은 인터페이스 이름과 같게! -->
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		where BID = #{bid}
+	</select>
+	<select id="getLevel" resultType="String"> <!-- id이름은 인터페이스 이름과 같게! -->
+		SELECT LEVEL 
+		FROM USERS
+		WHERE ID = #{id}
+	</select>
+	<insert id="addBoard" parameterType="map">
+		insert into board (UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG)
+		values(#{uid},#{title},#{state},#{btype},#{category},#{loc}, #{loc2},#{content}, 0,0 ,#{img})
+	</insert>
+	<update id="updateBoard" parameterType="lifeShare.dto.Board">
+		update BOARD set
+		TITLE=#{title},
+		BTYPE=#{btype},
+		CATEGORY=#{category},
+		LOC=#{loc},
+		LOC2=#{loc2},
+		CONTENT=#{content},
+		IMG=#{img}
+		where BID=#{bid}
+	</update>
+	<select id="getBoards" resultMap="boardMap">
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		<if test="category != ''">
+		where CATEGORY=#{category}
+		</if>
+		<if test="keyword != ''">
+		where TITLE LIKE CONCAT('%',#{keyword},'%') OR LOC LIKE CONCAT('%',#{keyword},'%') OR LOC2 LIKE CONCAT('%',#{keyword},'%')
+		</if>
+		<choose>
+		<when test="order == ''">
+		order by TIME_OF_UPLOAD desc
+		</when>
+		<when test="order == 'likes'">
+		order by LIKES desc
+		</when>
+		<when test="order == 'views'">
+		order by VIEWS desc
+		</when>
+		</choose>
+		LIMIT #{startList}, #{listSize}
+	</select>
+	<select id="getBoardsMain" resultMap="boardMap">
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		order by TIME_OF_UPLOAD desc
+	</select>
+	<!-- <select id="getByteImage" resultType="java.util.Map">
+		SELECT IMG FROM BOARD
+	</select>  -->
+
+	<select id="getBoardsLikesMain" resultMap="boardMap">
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		order by LIKES desc
+	</select>
+	<select id="getBoardListCnt" resultType="int">
+		SELECT count(*) as listCnt FROM BOARD
+		<if test="category != ''">
+		where CATEGORY=#{category}
+		</if>
+		<if test="keyword != ''">
+		where TITLE LIKE CONCAT('%',#{keyword},'%') OR LOC LIKE CONCAT('%',#{keyword},'%') OR LOC2 LIKE CONCAT('%',#{keyword},'%')
+		</if>
+	</select>
+
+	
+	<select id="myBoard" resultType="lifeShare.dto.Board"> 
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		where UID = #{uid}
+	</select>
+	
+	<!-- 검색 -->
+	<select id="searchBoard" resultType="lifeShare.dto.Board">
+		select LOC, LOC2, TITLE from BOARD where title like #{%다} or title like #{%요} or loc like #{%구%} or loc2 like #{%시%}
+	</select>
+	
+	<update id = "updateViews">
+		UPDATE BOARD SET VIEWS = VIEWS + 1
+		WHERE BID = #{bid}
+	</update>
+
+	
+</mapper>

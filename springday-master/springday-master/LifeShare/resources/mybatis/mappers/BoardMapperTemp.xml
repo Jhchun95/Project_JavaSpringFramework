@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lifeShare.dao.BoardMapperTemp">
+<resultMap id="boardMap" type="lifeShare.dto.Board">
+	<id column="BID" property="bid"/>
+	<id column="UID" property="uid"/>
+	<id column="BTYPE" property="btype"/>
+	<id column="TITLE" property="title"/>
+	<id column="STATE" property="state"/>
+	<id column="CATEGORY" property="category"/>
+	<id column="LOC" property="loc"/>
+	<id column="LOC2" property="loc2"/>
+	<id column="CONTENT" property="content"/>
+	<id column="LIKES" property="likes"/>
+	<id column="VIEWS" property="views"/>
+	<id column="IMG" property="img" jdbcType="BLOB"/><!-- 여기 바이트로!  -->
+	<id column="TIME_OF_UPLOAD" property="time_of_upload"/>
+</resultMap>
+
+	<select id="getBoard" resultMap="boardMap"> <!-- id이름은 인터페이스 이름과 같게! -->
+		select BID, UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG, TIME_OF_UPLOAD
+		from BOARD
+		where BID = #{bid}
+	</select>
+	<select id="getImage" resultType="java.util.Map" parameterType="int"> 
+		select IMG
+		from BOARD
+		where BID = #{bid}
+	</select>
+	<insert id="addBoard" parameterType="map">
+		insert into BOARD (UID, TITLE, STATE, BTYPE, CATEGORY, LOC, LOC2, CONTENT, LIKES, VIEWS, IMG)
+		values(#{uid},#{title},'미완료',#{btype},#{category},#{loc}, #{loc2},#{content}, 0,0 ,#{img})
+	</insert>
+	
+	<update id="switchToComplete" parameterType="int">
+		UPDATE BOARD SET STATE='완료' WHERE BID=#{bid}
+	</update>
+	<update id="switchToIncomplete" parameterType="int">
+		UPDATE BOARD SET STATE='미완료' WHERE BID=#{bid}
+	</update>
+	<update id="switchToReserved" parameterType="int">
+		UPDATE BOARD SET STATE='예약중' WHERE BID=#{bid}
+	</update>
+	<update id="addLevel" parameterType="String">
+		UPDATE USERS SET LEVEL=LEVEL+1 WHERE ID=#{id};
+	</update>
+	<update id="updateBoard" parameterType="map">
+		update BOARD set
+		TITLE=#{title},
+		STATE=#{state},
+		BTYPE=#{BTYPE},
+		CATEGORY=#{category},
+		LOC=#{loc},
+		LOC2=#{loc2},
+		CONTENT=#{content},
+		LIKES=#{likes},
+		IMG=#{img}
+		where BID=#{bid}
+	</update>
+
+	
+</mapper>

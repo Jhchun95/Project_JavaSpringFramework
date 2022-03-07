@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lifeShare.dao.LikesMapper">
+	
+	<resultMap type="lifeShare.dto.Likes" id = "Likes_resultMap">		
+		<result column="BID" property="bid" />
+		<result column="UID" property="uid" />
+	</resultMap>
+	
+	<select id = "findLike" resultType="java.lang.Integer">
+	select count(BID) from LIKES where BID=#{bid} AND UID= #{uid}
+	</select>
+	
+			
+	<insert id = "addLike" parameterType = "lifeShare.dto.Likes">
+		insert into LIKES (BID,UID ) values( #{bid}, #{uid} )
+	</insert>
+
+	<delete id = "deleteLike">
+		delete from LIKES where UID = #{uid} AND BID = #{bid}
+	</delete>
+	
+	<update id = "updateLike" parameterType="map">
+		update BOARD set LIKES =(select count(BID) from LIKES where BID=#{bid} )
+		 where BID = #{bid}
+	</update>
+	
+	
+	
+	
+</mapper>
