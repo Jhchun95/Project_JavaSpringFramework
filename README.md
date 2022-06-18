@@ -1,4 +1,6 @@
-# JavaSpring Framework를 이용한 거래 웹사이트
+> **JavaSpring Framework Project**
+
+거래 웹사이트
 1. Eclipse와 SourceTree 프로그램, Java 언어 사용  
 2. 주변 자취생분들이 본인이 사용하고 있는 물품을 공유, 거래하는 웹사이트를 제작  
 3. 로그인, 쪽지 전송, 게시글 등의 기능이 구현된 프로젝트  
