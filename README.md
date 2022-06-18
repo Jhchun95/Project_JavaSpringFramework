@@ -1,7 +1,7 @@
 > **JavaSpring Framework Project**
 
-거래 웹사이트
-![image description](./결과사진 모음/메인화면_실행/LifeShare_메인화면_처음화면.PNG)
+주제 : 공유 플랫폼 웹사이트  
+<img src="./img/메인화면_실행/LifeShare_메인화면_처음화면.PNG" width="600" height="400">
 
 1. Eclipse와 SourceTree 프로그램, Java 언어 사용  
 2. 주변 자취생분들이 본인이 사용하고 있는 물품을 공유, 거래하는 웹사이트를 제작  
